@@ -115,6 +115,31 @@ class Welcome extends CI_Controller {
 
     }
 
+    public function deleteHistory(){
+
+        // $keyUpdate = $this->input->post('stringSent');
+        $latestIDString = "";
+        $getLatestID = $this->Home_model->getSelectData("*","history_passwd_change", "ORDER BY id_history DESC LIMIT 1");
+        foreach ($getLatestID->result() as $row) {
+            $latestIDString = $row->id_history;
+        }
+
+        $xxx =$this->Home_model->deleteData('history_passwd_change' , "id_history!=$latestIDString");
+        
+
+        if ($xxx) {
+            $hasil2['hasil2'] = 'true';
+        }else{
+            $hasil2['hasil2'] = 'false';
+        }
+        echo json_encode($hasil2);
+
+
+
+        
+
+    }
+
     public function APIGetHistory()
     {
         $result= array();

@@ -39,7 +39,46 @@
       view:"toolbar", elements:[
       { label: "<span class='mdi mdi-history' style='font-size:20px;float:left; margin-right:15px;'></span>History Password Change",
       view: "label",},
-      { view:"button", value:"<span class='mdi mdi-close'></span>", width:40, class :"webix_dark", click:function(){
+      { view:"button", value:"<span class='mdi mdi-delete'></span>", width:40, class :"webix_dark",
+      tooltip:{
+        template:function(obj){
+          return ("Are you sure to delete all history?<br/>Except the latest update.");
+        },
+        dx:10, dy:20
+      },
+      click:function(){
+        jQuery.ajax({
+          type: "POST",
+          url: "<?php echo base_url(); ?>"+"Welcome/deleteHistory",
+          dataType: 'json',
+                  //mengirim data dengan type post
+                  data: { stringSent: ''},
+                  //menerima result dari controller
+                  success: function(res) {
+                    if(res.hasil2 == 'true'){
+                     webix.message("History is clear.");
+                     $$("dataTableGetHistory").clearAll();
+                     $$("dataTableGetHistory").load("<?php echo base_url(); ?>"+"Welcome/APIGetHistory")
+
+                   }
+                   if(res.hasil2 == 'false'){
+                    webix.message("Something wrong with this operation, please find out as quick as you can!");
+                    this.getTopParentView().hide();
+
+                  }
+                }
+
+
+              });
+      }},
+
+      { view:"button", value:"<span class='mdi mdi-close'></span>", width:40, class :"webix_dark",
+      tooltip:{
+        template:function(obj){
+          return ("Close");
+        },
+        dx:10, dy:20
+      }, click:function(){
         this.getTopParentView().hide();
       }}
       ]
@@ -54,14 +93,14 @@
       view:"datatable",
       id : "dataTableGetHistory",
       columns:[
-        { id:"rank",  header:"No.",  width:50},
-        { id:"title", header:"Tanggal Update",width:200},
+      { id:"rank",  header:"No.",  width:50},
+      { id:"title", header:"Tanggal Update",width:200},
       
       ],
       autoheight:true,
       autowidth:true,
       url:"<?php echo base_url(); ?>"+"Welcome/APIGetHistory"
-        
+
 
     }
   });
@@ -414,7 +453,7 @@ function hasNumber(myString) {
   return /\d/.test(myString);
 }
 
- 
+
 
 $$("form_induk").load(function(){
   jQuery.ajax({
